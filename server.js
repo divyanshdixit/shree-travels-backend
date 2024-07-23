@@ -48,7 +48,7 @@ app.post("/payment", async (req, res) => {
       email,
     redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
     //   redirectUrl: `http://localhost:8000/status/${merchantTrxnId}`,
-      redirectMode: "POST",
+      redirectMode: "REDIRECT",
       mobileNumber: mobile,
       paymentInstrument: {
         type: "PAY_PAGE",
@@ -100,7 +100,7 @@ app.post("/status/:id", async (req, res) => {
   // CHECK PAYMENT STATUS
   const options = {
     method: "GET",
-    url: `https://api-preprod.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+    url: `https://api.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`,
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
