@@ -18,9 +18,11 @@ app.use(
     extended: false,
   })
 );
-app.use(cors({
-    origin: 'https://shreetravels.netlify.app',
-}));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(
   bodyParser.urlencoded({
@@ -48,8 +50,8 @@ app.post("/payment", async (req, res) => {
       name,
       amount,
       email,
-      redirectUrl: `https://shreetravels.netlify.app/response?id=${merchantTrxnId}`,
-    //   redirectUrl: `http://localhost:3000/response?id=${merchantTrxnId}`,
+        redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
+    //   redirectUrl: `http://localhost:8000/status/${merchantTrxnId}`,
       redirectMode: "REDIRECT",
       mobileNumber: mobile,
       paymentInstrument: {
@@ -112,21 +114,30 @@ app.get("/status/:id", async (req, res) => {
   };
   const result = await axios.request(options);
   console.log("resultssssss", result); //status, data);
-  
-  if (result.data.success === true) {
-    // const url = `https://shreetravels.netlify.app/success`
-    // const url = `http://localhost:3000/success`;
-    //  return res.redirect(url)
-    return res
-      .status(200)
-      .json({ result: result.data });
-  } else {
-    // const url = `https://shreetravels.netlify.app/failure`
-    // const url = `http://localhost:3000/failure`;
-    // return res.redirect(url);
-    return res.status(400).json({ result:result.data })
-  }
-    
+
+  const dataString = `&amount=${
+    result.data.data.amount / 100
+  }&merchantTransactionId=${
+    result.data.data.merchantTransactionId
+  }&transactionId=${result.data.data.transactionId}&type=${
+    result.data.data.paymentInstrument.type
+  }&responseCode=${result.data.data.responseCode}`;
+
+    if (result.data.success === true) {
+  const url = `https://shreetravels.netlify.app/success?${dataString}`
+//   const url = `http://localhost:3000/success?${dataString}`;
+//   const url = `http://localhost:3000/payment?${tempDataString}`;
+  return res.redirect(url);
+  // return res
+  //   .status(200)
+  //   .json({ result: result.data });
+    } else {
+  const url = `https://shreetravels.netlify.app/failure?${dataString}`
+//   const url = `http://localhost:3000/failure?${dataString}`;
+  return res.redirect(url);
+  // return res.status(400).json({ result:result.data })
+    }
+
   // }catch(err){
   //     const url = `http://localhost:3000/failure`
   //     // const url = `https://shreetravels.netlify.app/failure`
