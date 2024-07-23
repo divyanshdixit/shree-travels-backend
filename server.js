@@ -87,7 +87,7 @@ app.post("/payment", async (req, res) => {
 });
 
 // check for payment status and redirect accordingly:
-app.post("/status/:id", async (req, res) => {
+app.get("/status/:id", async (req, res) => {
   // try{
   console.log("status");
   const merchantTransactionId = req.params.id;
