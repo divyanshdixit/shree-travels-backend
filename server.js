@@ -50,9 +50,9 @@ app.post("/payment", async (req, res) => {
       name,
       amount,
       email,
-        redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
+    redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
     //   redirectUrl: `http://localhost:8000/status/${merchantTrxnId}`,
-      redirectMode: "REDIRECT",
+      redirectMode: "POST",
       mobileNumber: mobile,
       paymentInstrument: {
         type: "PAY_PAGE",
@@ -91,7 +91,7 @@ app.post("/payment", async (req, res) => {
 });
 
 // check for payment status and redirect accordingly:
-app.get("/status/:id", async (req, res) => {
+app.post("/status/:id", async (req, res) => {
   // try{
   console.log("status");
   const merchantTransactionId = req.params.id;
