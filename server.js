@@ -32,7 +32,7 @@ app.post('/payment', async(req, res) => {
             merchantUserId,
             name,
             amount,
-            redirectUrl: `http://localhost:8000/status/?id=${merchantTrxnId}`,
+            redirectUrl: `https://shree-travels-backend.onrender.com/status/?id=${merchantTrxnId}`,
             redirectMode: 'POST',
             mobileNumber: mobile,
             paymentInstrument: {
@@ -108,10 +108,10 @@ app.post("/status", async (req, res) => {
     if (result.data.success === true) {
         return res.status(200).json({message: 'Payment is successful!', result:result.data})
 
-        const url = `http://localhost:3000/success`
+        const url = `https://shreetravels.netlify.app//success`
         return res.redirect(result, url)
     } else {
-        const url = `http://localhost:3000/failure`
+        const url = `https://shreetravels.netlify.app//failure`
         // return res.status(400).json({message: 'Payment is declined!', result:result.data})
         return res.redirect(result, url)
     }
