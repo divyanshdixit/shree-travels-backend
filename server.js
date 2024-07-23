@@ -47,15 +47,7 @@ app.post('/payment', async(req, res) => {
         const checksum = getPayString(string);
         const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
         // const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-        // const response = await fetch(prod_URL, {
-        //     method: 'POST',
-        //     headers: {
-        //         accept: 'application/json',
-        //         'Content-Type': 'application/json',
-        //         'X-VERIFY': checksum
-        //     },
-        //     body: payloadMain
-        // });
+       
         const options = {
             method: 'POST',
             url: prod_URL,
@@ -76,27 +68,16 @@ app.post('/payment', async(req, res) => {
 })
 
 // check for payment status and redirect accordingly:
-app.get("/status", async (req, res) => {
+app.get("/status/:id", async (req, res) => {
     // try{
     console.log('status')
-    const merchantTransactionId = req.query.id
+    const merchantTransactionId = req.params.id
     console.log('merchantTransactionId', merchantTransactionId, saltKey);
     const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + saltKey;
     const checksum = getPayString(string);
     console.log('checksum', checksum);
 
-    // CHECK PAYMENT TATUS
-
-    // const response = await fetch(`https://api-preprod.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`, {
-    //     method: 'GET',
-    //     headers: {
-    //         accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //         'X-VERIFY': checksum,
-    //         'X-MERCHANT-ID': `${merchantId}`
-    //     },
-    // });
-    // const result = await response.json();
+    // CHECK PAYMENT STATUS
     const options = {
         method: 'GET',
         url: `https://api-preprod.phonepe.com/apis/hermes/pg/v1/status/${merchantId}/${merchantTransactionId}`,
@@ -109,7 +90,7 @@ app.get("/status", async (req, res) => {
         }
     };
     const result = await axios.request(options);
-    console.log('result', result.data, result.data.message)
+    console.log('resultssssss', result.success, result.code, result.message)
     // if (result.data.success === true) {
     //     // return res.status(200).json({message: 'Payment is successful!', result:result.data})
 
