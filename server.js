@@ -32,9 +32,10 @@ app.post('/payment', async(req, res) => {
             merchantUserId,
             name,
             amount,
-            redirectUrl: `https://shree-travels-backend.onrender.com/status/?id=${merchantTrxnId}`,
-            // redirectUrl: `http://localhost:8000/status?id=${merchantTrxnId}`,
-            redirectMode: 'POST',
+            email,
+            redirectUrl: `https://shreetravels.netlify.app/response?id=${merchantTrxnId}`,
+            // redirectUrl: `http://localhost:3000/response?id=${merchantTrxnId}`,
+            redirectMode: 'REDIRECT',
             mobileNumber: mobile,
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -70,17 +71,16 @@ app.post('/payment', async(req, res) => {
             let response = await axios.request(options);
         res.status(200).json({result: response.data})
     }catch(err){
-        // console.log(err.data.message);
         res.status(500).json({message: 'Something went wrong', error:err.message, succes: false})
     }
 })
 
 // check for payment status and redirect accordingly:
-app.post("/status", async (req, res) => {
-    try{
+app.get("/status", async (req, res) => {
+    // try{
     console.log('status')
     const merchantTransactionId = req.query.id
-    console.log('merchantTransactionId', merchantTransactionId);
+    console.log('merchantTransactionId', merchantTransactionId, saltKey);
     const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + saltKey;
     const checksum = getPayString(string);
     console.log('checksum', checksum);
@@ -109,26 +109,25 @@ app.post("/status", async (req, res) => {
         }
     };
     const result = await axios.request(options);
-    console.log('result', result.data)
-    if (result.data.success === true) {
-        // return res.status(200).json({message: 'Payment is successful!', result:result.data})
+    console.log('result', result.data, result.data.message)
+    // if (result.data.success === true) {
+    //     // return res.status(200).json({message: 'Payment is successful!', result:result.data})
 
-        const url = `https://shreetravels.netlify.app/success`
-        // const url = `http://localhost:3000/success`
-        return res.redirect(url)
-    } else {
-        const url = `https://shreetravels.netlify.app/failure`
-        // const url = `http://localhost:3000/failure`
-        // return res.status(400).json({message: 'Payment is declined!', result:result.data})
-        return res.redirect(url)
-    }
-}catch(err){
-    console.log(err.message)
-    // const url = `http://localhost:3000/failure`
-    const url = `https://shreetravels.netlify.app/failure`
-    return res.redirect(url)
+    //     // const url = `https://shreetravels.netlify.app/success`
+    //     const url = `http://localhost:3000/success`
+    //     return res.redirect(url)
+    // } else {
+    //     // const url = `https://shreetravels.netlify.app/failure`
+    //     const url = `http://localhost:3000/failure`
+    //     // return res.status(400).json({message: 'Payment is declined!', result:result.data})
+    //     return res.redirect(url)
+    // }
+// }catch(err){
+//     const url = `http://localhost:3000/failure`
+//     // const url = `https://shreetravels.netlify.app/failure`
+//     return res.redirect(url)
 
-}
+// }
 
 })
 
