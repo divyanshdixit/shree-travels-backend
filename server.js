@@ -18,7 +18,10 @@ app.use(
     extended: false,
   })
 );
-app.use(cors());
+app.use(cors({
+    origin: 'https://shreetravels.netlify.app',
+}));
+
 app.use(
   bodyParser.urlencoded({
     extended: false,
