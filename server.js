@@ -18,11 +18,7 @@ app.use(
     extended: false,
   })
 );
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors());
 
 app.use(
   bodyParser.urlencoded({
