@@ -106,12 +106,12 @@ app.post("/status", async (req, res) => {
     const result = await axios.request(options);
     console.log('result', result)
     if (result.data.success === true) {
-        return res.status(200).json({message: 'Payment is successful!', result:result.data})
+        // return res.status(200).json({message: 'Payment is successful!', result:result.data})
 
-        const url = `https://shreetravels.netlify.app//success`
+        const url = `https://shreetravels.netlify.app/success`
         return res.redirect(result, url)
     } else {
-        const url = `https://shreetravels.netlify.app//failure`
+        const url = `https://shreetravels.netlify.app/failure`
         // return res.status(400).json({message: 'Payment is declined!', result:result.data})
         return res.redirect(result, url)
     }
