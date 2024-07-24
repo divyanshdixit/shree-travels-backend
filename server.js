@@ -107,7 +107,7 @@ app.get("/status/:id", async (req, res) => {
   const result = await axios.request(options);
   console.log('resultsssss', result);
 
-  const dataString = `&amount=${
+  const successDataString = `&amount=${
     result.data.data.amount / 100
   }&merchantTransactionId=${
     result.data.data.merchantTransactionId
@@ -115,12 +115,18 @@ app.get("/status/:id", async (req, res) => {
     result.data.data.paymentInstrument.type
   }&responseCode=${result.data.data.responseCode}&redirect=true`;
 
+  const failDataString = `&amount=${
+    result.data.data.amount / 100
+  }&merchantTransactionId=${
+    result.data.data.merchantTransactionId
+  }&transactionId=${result.data.data.transactionId}&responseCode=${result.data.data.state}&redirect=true`;
+
     if (result.data.success === true) {
-  const url = `https://shreetravels.netlify.app/success?${dataString}`
+  const url = `https://shreetravels.netlify.app/success?${successDataString}`
   // const url = `http://localhost:3000/success?${dataString}`;
   return res.redirect(url);
     } else {
-  const url = `https://shreetravels.netlify.app/failure?${dataString}`
+  const url = `https://shreetravels.netlify.app/failure?${failDataString}`
   // const url = `http://localhost:3000/failure?${dataString}`;
   return res.redirect(url);
     }
