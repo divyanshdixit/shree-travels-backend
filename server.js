@@ -46,7 +46,7 @@ app.post("/payment", async (req, res) => {
       name,
       amount,
       email,
-    redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
+      redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
       // redirectUrl: `http://localhost:8000/status/${merchantTrxnId}`,
       redirectMode: "REDIRECT",
       mobileNumber: mobile,
@@ -105,31 +105,38 @@ app.get("/status/:id", async (req, res) => {
     },
   };
   const result = await axios.request(options);
-  console.log('resultsssss', result);
+  console.log("resultsssss", result);
 
-  const successDataString = `&amount=${
-    result.data.data.amount / 100
-  }&merchantTransactionId=${
-    result.data.data.merchantTransactionId
-  }&transactionId=${result.data.data.transactionId}&type=${
-    result.data.data.paymentInstrument.type
-  }&responseCode=${result.data.data.responseCode}&redirect=true`;
+  let successDataString = "";
+  let failDataString = "";
 
-  const failDataString = `&amount=${
-    result.data.data.amount / 100
-  }&merchantTransactionId=${
-    result.data.data.merchantTransactionId
-  }&transactionId=${result.data.data.transactionId}&responseCode=${result.data.data.state}&redirect=true`;
+  if (result.data.data.paymentInstrument === null) {
+    failDataString = `&amount=${
+      result.data.data.amount / 100
+    }&merchantTransactionId=${
+      result.data.data.merchantTransactionId
+    }&transactionId=${result.data.data.transactionId}&responseCode=${
+      result.data.data.state
+    }&redirect=true`;
+  } else {
+    successDataString = `&amount=${
+      result.data.data.amount / 100
+    }&merchantTransactionId=${
+      result.data.data.merchantTransactionId
+    }&transactionId=${result.data.data.transactionId}&type=${
+      result.data.data.paymentInstrument.type
+    }&responseCode=${result.data.data.responseCode}&redirect=true`;
+  }
 
-    if (result.data.success === true) {
-  const url = `https://shreetravels.netlify.app/success?${successDataString}`
-  // const url = `http://localhost:3000/success?${dataString}`;
-  return res.redirect(url);
-    } else {
-  const url = `https://shreetravels.netlify.app/failure?${failDataString}`
-  // const url = `http://localhost:3000/failure?${dataString}`;
-  return res.redirect(url);
-    }
+  if (result.data.success === true) {
+    const url = `https://shreetravels.netlify.app/success?${successDataString}`;
+    // const url = `http://localhost:3000/success?${dataString}`;
+    return res.redirect(url);
+  } else {
+    const url = `https://shreetravels.netlify.app/failure?${failDataString}`;
+    // const url = `http://localhost:3000/failure?${dataString}`;
+    return res.redirect(url);
+  }
 
   // }catch(err){
   //   const dataString = `&amount=${
