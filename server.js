@@ -87,7 +87,7 @@ app.post("/payment", async (req, res) => {
 
 // check for payment status and redirect accordingly:
 app.get("/status/:id", async (req, res) => {
-  try{
+  // try{
   const merchantTransactionId = req.params.id;
   const string =
     `/pg/v1/status/${merchantId}/${merchantTransactionId}` + saltKey;
@@ -105,6 +105,7 @@ app.get("/status/:id", async (req, res) => {
     },
   };
   const result = await axios.request(options);
+  console.log('resultsssss', result);
 
   const dataString = `&amount=${
     result.data.data.amount / 100
@@ -124,12 +125,18 @@ app.get("/status/:id", async (req, res) => {
   return res.redirect(url);
     }
 
-  }catch(err){
-      // const url = `http://localhost:3000/failure`
-      const url = `https://shreetravels.netlify.app/failure?${dataString}`
-      return res.redirect(url)
-
-  }
+  // }catch(err){
+  //   const dataString = `&amount=${
+  //     result.data.data.amount / 100
+  //   }&merchantTransactionId=${
+  //     result.data.data.merchantTransactionId
+  //   }&transactionId=${result.data.data.transactionId}&type=${
+  //     result.data.data.paymentInstrument.type
+  //   }&responseCode=${result.data.data.responseCode}&redirect=true`;
+  //     // const url = `http://localhost:3000/failure`
+  //     const url = `https://shreetravels.netlify.app/failure?${dataString}`
+  //     return res.redirect(url)
+  // }
 });
 
 // run server
