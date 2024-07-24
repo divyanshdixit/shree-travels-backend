@@ -112,7 +112,7 @@ app.get("/status/:id", async (req, res) => {
     result.data.data.merchantTransactionId
   }&transactionId=${result.data.data.transactionId}&type=${
     result.data.data.paymentInstrument.type
-  }&responseCode=${result.data.data.responseCode}`;
+  }&responseCode=${result.data.data.responseCode}&redirect=true`;
 
     if (result.data.success === true) {
   const url = `https://shreetravels.netlify.app/success?${dataString}`
