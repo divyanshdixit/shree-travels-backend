@@ -3,6 +3,8 @@ const cors = require("cors");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const getPayString = require("./utils/payString");
+const ContactRoutes = require("./routes/contact");
+require("./db");
 
 require("dotenv").config();
 
@@ -26,6 +28,10 @@ app.use(
   })
 );
 
+// routing enabled api :
+
+app.use("/api", ContactRoutes);
+
 // payment api:
 
 app.post("/payment", async (req, res) => {
@@ -33,9 +39,9 @@ app.post("/payment", async (req, res) => {
     const {
       name,
       email,
-      address,
       amount,
-      mobile,
+      remarks,
+      currency,
       merchantUserId,
       merchantTrxnId,
     } = req.body;
@@ -46,10 +52,11 @@ app.post("/payment", async (req, res) => {
       name,
       amount,
       email,
+      currency,
+      remarks,
       redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
-      // redirectUrl: `http://localhost:8000/status/${merchantTrxnId}`,
+      // redirectUrl: `http://localhost:8000/status/${merchantTrxnId}?name=${name}&email=${email}&currency=${currency}&remarks=${remarks}`,
       redirectMode: "REDIRECT",
-      mobileNumber: mobile,
       paymentInstrument: {
         type: "PAY_PAGE",
       },
@@ -87,7 +94,8 @@ app.post("/payment", async (req, res) => {
 
 // check for payment status and redirect accordingly:
 app.get("/status/:id", async (req, res) => {
-  // try{
+  const searchParams = req.query;
+  const {name, email, currency, remarks} = searchParams;
   const merchantTransactionId = req.params.id;
   const string =
     `/pg/v1/status/${merchantId}/${merchantTransactionId}` + saltKey;
@@ -105,7 +113,6 @@ app.get("/status/:id", async (req, res) => {
     },
   };
   const result = await axios.request(options);
-  console.log("resultsssss", result);
 
   let successDataString = "";
   let failDataString = "";
@@ -113,43 +120,30 @@ app.get("/status/:id", async (req, res) => {
   if (result.data.data.paymentInstrument === null) {
     failDataString = `&amount=${
       result.data.data.amount / 100
-    }&merchantTransactionId=${
+    } ${currency}&merchantTransactionId=${
       result.data.data.merchantTransactionId
     }&transactionId=${result.data.data.transactionId}&responseCode=${
       result.data.data.state
-    }&redirect=true`;
+    }&email=${email}&name=${name}&remarks=${remarks}&redirect=true`;
   } else {
     successDataString = `&amount=${
       result.data.data.amount / 100
-    }&merchantTransactionId=${
+    } ${currency}&merchantTransactionId=${
       result.data.data.merchantTransactionId
     }&transactionId=${result.data.data.transactionId}&type=${
       result.data.data.paymentInstrument.type
-    }&responseCode=${result.data.data.responseCode}&redirect=true`;
+    }&responseCode=${result.data.data.responseCode}&email=${email}&name=${name}&remarks=${remarks}&redirect=true`;
   }
 
   if (result.data.success === true) {
     const url = `https://shreetravels.netlify.app/success?${successDataString}`;
-    // const url = `http://localhost:3000/success?${dataString}`;
+    // const url = `http://localhost:3000/success?${successDataString}`;
     return res.redirect(url);
   } else {
     const url = `https://shreetravels.netlify.app/failure?${failDataString}`;
-    // const url = `http://localhost:3000/failure?${dataString}`;
+    // const url = `http://localhost:3000/failure?${failDataString}`;
     return res.redirect(url);
   }
-
-  // }catch(err){
-  //   const dataString = `&amount=${
-  //     result.data.data.amount / 100
-  //   }&merchantTransactionId=${
-  //     result.data.data.merchantTransactionId
-  //   }&transactionId=${result.data.data.transactionId}&type=${
-  //     result.data.data.paymentInstrument.type
-  //   }&responseCode=${result.data.data.responseCode}&redirect=true`;
-  //     // const url = `http://localhost:3000/failure`
-  //     const url = `https://shreetravels.netlify.app/failure?${dataString}`
-  //     return res.redirect(url)
-  // }
 });
 
 // run server
