@@ -54,7 +54,7 @@ app.post("/payment", async (req, res) => {
       email,
       currency,
       remarks,
-      redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}`,
+      redirectUrl: `https://shree-travels-backend.onrender.com/status/${merchantTrxnId}?name=${name}&email=${email}&currency=${currency}&remarks=${remarks}`,
       // redirectUrl: `http://localhost:8000/status/${merchantTrxnId}?name=${name}&email=${email}&currency=${currency}&remarks=${remarks}`,
       redirectMode: "REDIRECT",
       paymentInstrument: {
